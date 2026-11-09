@@ -26,7 +26,7 @@ TIMEOUT = 30                       # mỗi bước chờ tối đa 30 giây
 # Mô hình AI: dùng Gemini trước (nếu có GEMINI_API_KEY), quá tải thì tự chuyển sang mô hình Gemini khác,
 # rồi sang Groq (nếu có GROQ_API_KEY). Muốn đổi mô hình, thêm GEMINI_MODEL = "..." / GROQ_MODEL = "..." vào secrets.toml.
 GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-flash-latest"]
-GROQ_MODELS = ["llama-3.3-70b-versatile", "openai/gpt-oss-20b"]
+GROQ_MODELS = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b", "openai/gpt-oss-20b"]   # llama-3.3-70b đã bị Groq gỡ
 BUSY_WORDS = ("503", "unavailable", "overloaded", "high demand", "429", "resource_exhausted", "rate limit",
               "rate_limit", "timed out", "timeout", "504", "deadline", "500 internal", "internal error")
 MAX_WAIT = 75                       # tổng thời gian tối đa cho một lần gọi AI (kể cả thử mô hình dự phòng)
@@ -264,7 +264,9 @@ def _call_groq(system, prompt, json_mode, deadline):
             return r.choices[0].message.content
         except Exception as e:
             last = e
-            if not (_is_busy(e) or "model" in str(e).lower()):
+            m = str(e).lower()
+            # mô hình bị gỡ (404), lỗi ép JSON (400 json_validate) hay quá tải: thử mô hình kế tiếp
+            if _is_denied(e) or not (_is_busy(e) or "model" in m or "json_validate" in m or "400" in m):
                 break
     raise last or TimeoutError("timeout: AI phản hồi quá lâu")
 
