@@ -1,0 +1,9 @@
+.streamlit/secrets.toml
+*.json
+!options.json
+!world-110m.json
+!data/evaluation.json
+.venv/
+__pycache__/
+# nhật ký duyệt tin nhắn tạo ra khi chạy app
+data/*.db

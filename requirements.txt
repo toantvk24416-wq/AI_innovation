@@ -1,0 +1,12 @@
+streamlit==1.57.0
+# starlette 1.x làm lỗi phần nén gzip của Streamlit 1.57 (RuntimeError ASGI, trang báo Connection error)
+starlette==0.50.0
+pandas
+altair
+joblib
+scikit-learn==1.6.1
+xgboost==3.4.1
+google-cloud-bigquery
+db-dtypes
+google-genai
+groq

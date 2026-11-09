@@ -1,0 +1,93 @@
+route_name,order_region,shipping_mode,p50,p80,p90,n_lines
+Canada - First Class,Canada,First Class,2.0,2.0,2.0,170
+Canada - Same Day,Canada,Same Day,0.0,1.0,1.0,29
+Canada - Second Class,Canada,Second Class,4.0,6.0,6.0,154
+Canada - Standard Class,Canada,Standard Class,3.0,5.0,6.0,554
+Caribbean - First Class,Caribbean,First Class,2.0,2.0,2.0,1132
+Caribbean - Same Day,Caribbean,Same Day,1.0,1.0,1.0,428
+Caribbean - Second Class,Caribbean,Second Class,4.0,6.0,6.0,1548
+Caribbean - Standard Class,Caribbean,Standard Class,4.0,5.0,6.0,4843
+Central Africa - First Class,Central Africa,First Class,2.0,2.0,2.0,278
+Central Africa - Same Day,Central Africa,Same Day,0.0,1.0,1.0,79
+Central Africa - Second Class,Central Africa,Second Class,4.0,6.0,6.0,291
+Central Africa - Standard Class,Central Africa,Standard Class,4.0,6.0,6.0,968
+Central America - First Class,Central America,First Class,2.0,2.0,2.0,4185
+Central America - Same Day,Central America,Same Day,0.0,1.0,1.0,1357
+Central America - Second Class,Central America,Second Class,4.0,5.0,6.0,5250
+Central America - Standard Class,Central America,Standard Class,4.0,6.0,6.0,16382
+Central Asia - First Class,Central Asia,First Class,2.0,2.0,2.0,63
+Central Asia - Same Day,Central Asia,Same Day,0.0,0.4,1.0,64
+Central Asia - Second Class,Central Asia,Second Class,4.0,5.0,6.0,112
+Central Asia - Standard Class,Central Asia,Standard Class,4.0,5.0,6.0,303
+East Africa - First Class,East Africa,First Class,2.0,2.0,2.0,277
+East Africa - Same Day,East Africa,Same Day,0.0,1.0,1.0,95
+East Africa - Second Class,East Africa,Second Class,4.0,5.0,6.0,353
+East Africa - Standard Class,East Africa,Standard Class,4.0,6.0,6.0,1056
+East of USA - First Class,East of USA,First Class,2.0,2.0,2.0,1050
+East of USA - Same Day,East of USA,Same Day,1.0,1.0,1.0,397
+East of USA - Second Class,East of USA,Second Class,4.0,6.0,6.0,1222
+East of USA - Standard Class,East of USA,Standard Class,4.0,6.0,6.0,3948
+Eastern Asia - First Class,Eastern Asia,First Class,2.0,2.0,2.0,794
+Eastern Asia - Same Day,Eastern Asia,Same Day,0.0,1.0,1.0,322
+Eastern Asia - Second Class,Eastern Asia,Second Class,4.0,6.0,6.0,1106
+Eastern Asia - Standard Class,Eastern Asia,Standard Class,4.0,6.0,6.0,3499
+Eastern Europe - First Class,Eastern Europe,First Class,2.0,2.0,2.0,632
+Eastern Europe - Same Day,Eastern Europe,Same Day,0.0,1.0,1.0,176
+Eastern Europe - Second Class,Eastern Europe,Second Class,4.0,6.0,6.0,755
+Eastern Europe - Standard Class,Eastern Europe,Standard Class,4.0,6.0,6.0,2222
+North Africa - First Class,North Africa,First Class,2.0,2.0,2.0,472
+North Africa - Same Day,North Africa,Same Day,1.0,1.0,1.0,185
+North Africa - Second Class,North Africa,Second Class,4.0,5.0,6.0,590
+North Africa - Standard Class,North Africa,Standard Class,4.0,6.0,6.0,1839
+Northern Europe - First Class,Northern Europe,First Class,2.0,2.0,2.0,942
+Northern Europe - Same Day,Northern Europe,Same Day,0.0,1.0,1.0,303
+Northern Europe - Second Class,Northern Europe,Second Class,4.0,5.0,6.0,1175
+Northern Europe - Standard Class,Northern Europe,Standard Class,4.0,6.0,6.0,3544
+Oceania - First Class,Oceania,First Class,2.0,2.0,2.0,1062
+Oceania - Same Day,Oceania,Same Day,0.0,1.0,1.0,518
+Oceania - Second Class,Oceania,Second Class,4.0,5.0,6.0,1693
+Oceania - Standard Class,Oceania,Standard Class,4.0,6.0,6.0,5093
+South America - First Class,South America,First Class,2.0,2.0,2.0,2154
+South America - Same Day,South America,Same Day,1.0,1.0,1.0,743
+South America - Second Class,South America,Second Class,4.0,6.0,6.0,2700
+South America - Standard Class,South America,Standard Class,4.0,5.0,6.0,8587
+South Asia - First Class,South Asia,First Class,2.0,2.0,2.0,1073
+South Asia - Same Day,South Asia,Same Day,0.0,1.0,1.0,302
+South Asia - Second Class,South Asia,Second Class,4.0,5.0,6.0,1282
+South Asia - Standard Class,South Asia,Standard Class,4.0,6.0,6.0,3710
+South of  USA - First Class,South of  USA,First Class,2.0,2.0,2.0,571
+South of  USA - Same Day,South of  USA,Same Day,0.0,1.0,1.0,217
+South of  USA - Second Class,South of  USA,Second Class,4.0,5.0,6.0,815
+South of  USA - Standard Class,South of  USA,Standard Class,4.0,6.0,6.0,2252
+Southeast Asia - First Class,Southeast Asia,First Class,2.0,2.0,2.0,1240
+Southeast Asia - Same Day,Southeast Asia,Same Day,0.0,1.0,1.0,351
+Southeast Asia - Second Class,Southeast Asia,Second Class,4.0,5.0,6.0,1407
+Southeast Asia - Standard Class,Southeast Asia,Standard Class,4.0,6.0,6.0,4465
+Southern Africa - First Class,Southern Africa,First Class,2.0,2.0,2.0,195
+Southern Africa - Same Day,Southern Africa,Same Day,1.0,1.0,1.0,63
+Southern Africa - Second Class,Southern Africa,Second Class,4.0,6.0,6.0,139
+Southern Africa - Standard Class,Southern Africa,Standard Class,4.0,6.0,6.0,703
+Southern Europe - First Class,Southern Europe,First Class,2.0,2.0,2.0,937
+Southern Europe - Same Day,Southern Europe,Same Day,1.0,1.0,1.0,317
+Southern Europe - Second Class,Southern Europe,Second Class,4.0,5.0,6.0,1009
+Southern Europe - Standard Class,Southern Europe,Standard Class,4.0,5.0,6.0,3451
+US Center - First Class,US Center,First Class,2.0,2.0,2.0,951
+US Center - Same Day,US Center,Same Day,0.0,1.0,1.0,318
+US Center - Second Class,US Center,Second Class,4.0,6.0,6.0,1163
+US Center - Standard Class,US Center,Standard Class,4.0,5.0,6.0,3221
+West Africa - First Class,West Africa,First Class,2.0,2.0,2.0,453
+West Africa - Same Day,West Africa,Same Day,0.0,1.0,1.0,212
+West Africa - Second Class,West Africa,Second Class,4.0,5.0,6.0,718
+West Africa - Standard Class,West Africa,Standard Class,4.0,5.0,6.0,2188
+West Asia - First Class,West Asia,First Class,2.0,2.0,2.0,947
+West Asia - Same Day,West Asia,Same Day,0.0,1.0,1.0,278
+West Asia - Second Class,West Asia,Second Class,4.0,5.0,6.0,1157
+West Asia - Standard Class,West Asia,Standard Class,4.0,5.0,6.0,3364
+West of USA - First Class,West of USA,First Class,2.0,2.0,2.0,1072
+West of USA - Same Day,West of USA,Same Day,0.0,1.0,1.0,411
+West of USA - Second Class,West of USA,Second Class,4.0,5.0,6.0,1564
+West of USA - Standard Class,West of USA,Standard Class,4.0,6.0,6.0,4548
+Western Europe - First Class,Western Europe,First Class,2.0,2.0,2.0,2595
+Western Europe - Same Day,Western Europe,Same Day,0.0,1.0,1.0,886
+Western Europe - Second Class,Western Europe,Second Class,4.0,6.0,6.0,3279
+Western Europe - Standard Class,Western Europe,Standard Class,4.0,6.0,6.0,9463
