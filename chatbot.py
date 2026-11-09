@@ -27,8 +27,8 @@ TIMEOUT = 30                       # mỗi bước chờ tối đa 30 giây
 # rồi sang Groq (nếu có GROQ_API_KEY). Muốn đổi mô hình, thêm GEMINI_MODEL = "..." / GROQ_MODEL = "..." vào secrets.toml.
 GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-flash-latest"]
 GROQ_MODELS = ["llama-3.3-70b-versatile", "openai/gpt-oss-20b"]
-BUSY_WORDS = ("503", "unavailable", "overloaded", "high demand", "429", "resource_exhausted", "rate",
-              "timed out", "timeout", "504", "deadline", "500", "internal")
+BUSY_WORDS = ("503", "unavailable", "overloaded", "high demand", "429", "resource_exhausted", "rate limit",
+              "rate_limit", "timed out", "timeout", "504", "deadline", "500 internal", "internal error")
 MAX_WAIT = 75                       # tổng thời gian tối đa cho một lần gọi AI (kể cả thử mô hình dự phòng)
 
 SAMPLES = [
@@ -189,12 +189,23 @@ def _gemini():
     return genai.Client(api_key=_secret("GEMINI_API_KEY"), http_options=types.HttpOptions(timeout=TIMEOUT * 1000))
 
 
+def _is_denied(e):
+    """Khóa sai, hết hạn hoặc project chưa bật thanh toán: thử lại hay đổi mô hình cũng không được."""
+    m = str(e).lower()
+    return any(w in m for w in ("403", "permission_denied", "api key not valid", "api_key_invalid", "billing", "401"))
+
+
 def _is_busy(e):
     m = str(e).lower()
-    return any(w in m for w in BUSY_WORDS)
+    return not _is_denied(e) and any(w in m for w in BUSY_WORDS)
 
 
 def _friendly(e):
+    if _is_denied(e):
+        if "free tier is not available" in str(e).lower() or "billing" in str(e).lower():
+            return ("Khóa Gemini hợp lệ nhưng project Google của khóa không dùng được gói miễn phí. "
+                    "Hãy bật thanh toán cho project đó, tạo khóa ở project khác, hoặc dùng GROQ_API_KEY.")
+        return "Khóa AI không hợp lệ hoặc không có quyền. Hãy kiểm tra lại khóa trong Secrets."
     if _is_busy(e):
         return "AI đang quá tải hoặc hết lượt miễn phí. Cậu đợi khoảng 1 phút rồi hỏi lại nhé."
     return f"Không gọi được AI: {str(e)[:300]}"
