@@ -251,28 +251,36 @@ def _bigquery_client():
         return None
     from google.cloud import bigquery
     from google.oauth2 import service_account
-    info = dict(st.secrets["gcp_service_account"])
-    creds = service_account.Credentials.from_service_account_info(info)
-    return bigquery.Client(credentials=creds, project=info["project_id"])
+    try:
+        info = dict(st.secrets["gcp_service_account"])
+        creds = service_account.Credentials.from_service_account_info(info)
+        return bigquery.Client(credentials=creds, project=info["project_id"])
+    except Exception as e:     # khóa dán sai hoặc còn giá trị mẫu: dùng CSV thay vì làm sập cả trang
+        print(f"Khóa BigQuery trong secrets không dùng được ({type(e).__name__}: {e}). Chuyển sang dữ liệu CSV.")
+        return None
+
+
+def _query_or_csv(sql, csv_name):
+    """Đọc từ BigQuery nếu có khóa; khóa sai, thiếu quyền hoặc lỗi mạng thì đọc file CSV đi kèm app."""
+    client = _bigquery_client()
+    if client is not None:
+        try:
+            return client.query(sql).to_dataframe(create_bqstorage_client=False), "BigQuery"
+        except Exception as e:
+            print(f"Truy vấn BigQuery lỗi ({type(e).__name__}: {str(e)[:300]}). Chuyển sang {csv_name}.")
+    return pd.read_csv(BASE / csv_name), "CSV"
 
 
 @st.cache_data(ttl=600, show_spinner="Đang tải dữ liệu từ tầng Gold...")
 def load_overview():
-    client = _bigquery_client()
-    if client is not None:
-        df, source = client.query(OVERVIEW_SQL).to_dataframe(create_bqstorage_client=False), "BigQuery"
-    else:
-        df, source = pd.read_csv(BASE / "overview_monthly.csv"), "CSV"
+    df, source = _query_or_csv(OVERVIEW_SQL, "overview_monthly.csv")
     df["year_month"] = df["year_month"].astype(str)
     return df, source
 
 
 @st.cache_data(ttl=600, show_spinner="Đang tải bảng xếp hạng tuyến...")
 def load_route_risk():
-    client = _bigquery_client()
-    if client is not None:
-        return client.query("SELECT * FROM `dw-dataco-513010.gold.route_risk_expected`").to_dataframe(create_bqstorage_client=False)
-    return pd.read_csv(BASE / "route_risk.csv")
+    return _query_or_csv("SELECT * FROM `dw-dataco-513010.gold.route_risk_expected`", "route_risk.csv")[0]
 
 
 @st.cache_data
