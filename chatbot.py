@@ -457,23 +457,13 @@ def auto_chart(df, raw_cols):
 
 
 def show_reply(msg):
-    """Câu trả lời + biểu đồ (nếu hợp) + bảng số liệu + câu SQL đã chạy để người dùng kiểm chứng."""
+    """Câu trả lời + biểu đồ (nếu hợp). Bảng số liệu và câu SQL vẫn lưu trong msg nhưng không hiển thị."""
     st.markdown(msg["text"])
     df = msg.get("df")
     if df is not None and len(df):
-        view = vi_columns(df, msg.get("labels"))
-        chart = auto_chart(view, list(df.columns))
+        chart = auto_chart(vi_columns(df, msg.get("labels")), list(df.columns))
         if chart is not None:
             st.altair_chart(chart, width="stretch")
-        rates = {v: st.column_config.NumberColumn(v, format="percent") for c, v in zip(df.columns, view.columns)
-                 if ("ty_le" in c or "rate" in c) and pd.api.types.is_numeric_dtype(df[c]) and df[c].between(0, 1).all()}
-        with st.expander(f"Bảng số liệu ({len(df)} dòng)", expanded=True):
-            st.dataframe(view, hide_index=True, width="stretch", column_config=rates)
-    if msg.get("sql"):
-        with st.expander("Câu SQL đã chạy", expanded=True):
-            st.code(msg["sql"], language="sql")
-            st.markdown('<div class="sql-note">Câu SQL được kiểm tra trước khi chạy: chỉ đọc (SELECT) '
-                        'trên 4 bảng Gold, quét tối đa 1 GB.</div>', unsafe_allow_html=True)
 
 
 def page_chatbot():
