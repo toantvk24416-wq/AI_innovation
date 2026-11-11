@@ -467,10 +467,10 @@ def show_reply(msg):
             st.altair_chart(chart, width="stretch")
         rates = {v: st.column_config.NumberColumn(v, format="percent") for c, v in zip(df.columns, view.columns)
                  if ("ty_le" in c or "rate" in c) and pd.api.types.is_numeric_dtype(df[c]) and df[c].between(0, 1).all()}
-        with st.expander(f"Bảng số liệu ({len(df)} dòng)"):
+        with st.expander(f"Bảng số liệu ({len(df)} dòng)", expanded=True):
             st.dataframe(view, hide_index=True, width="stretch", column_config=rates)
     if msg.get("sql"):
-        with st.expander("Câu SQL đã chạy"):
+        with st.expander("Câu SQL đã chạy", expanded=True):
             st.code(msg["sql"], language="sql")
             st.markdown('<div class="sql-note">Câu SQL được kiểm tra trước khi chạy: chỉ đọc (SELECT) '
                         'trên 4 bảng Gold, quét tối đa 1 GB.</div>', unsafe_allow_html=True)
