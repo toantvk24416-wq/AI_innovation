@@ -14,7 +14,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parents[1]
 
 # ============================================================ 1. MÀU SẮC VÀ CSS
 ACCENT = "#EF4B4B"   # đỏ san hô: màu nhấn chính
@@ -268,7 +268,7 @@ def _query_or_csv(sql, csv_name):
             return client.query(sql).to_dataframe(create_bqstorage_client=False), "BigQuery"
         except Exception as e:
             print(f"BigQuery query failed ({type(e).__name__}: {str(e)[:300]}). Falling back to {csv_name}.")
-    return pd.read_csv(BASE / csv_name), "CSV"
+    return pd.read_csv(BASE / "data" / csv_name), "CSV"
 
 
 @st.cache_data(ttl=600, show_spinner="Loading data from the Gold layer...")
@@ -285,7 +285,7 @@ def load_route_risk():
 
 @st.cache_data
 def load_mode_days():
-    opt = json.loads((BASE / "options.json").read_text(encoding="utf-8"))
+    opt = json.loads((BASE / "data" / "options.json").read_text(encoding="utf-8"))
     return opt.get("mode_days", {}), opt.get("region_market", {})
 
 

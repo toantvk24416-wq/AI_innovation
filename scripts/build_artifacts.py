@@ -72,7 +72,7 @@ def check(label, got, expected):
 
 # ------------------------------------------------------------------ 1. Đọc và chuẩn hóa
 def load(raw_path):
-    opt = json.loads((ROOT / "options.json").read_text(encoding="utf-8"))
+    opt = json.loads((ROOT / "data" / "options.json").read_text(encoding="utf-8"))
     d = pd.read_csv(raw_path, encoding="latin-1")
     for c in ["Order Region", "Order Country", "Market", "Shipping Mode", "Category Name", "Department Name",
               "Customer Segment", "Type"]:
@@ -240,7 +240,7 @@ def precision_at_k(q, ks=(10, 20, 50)):
 
 
 def main(raw_path):
-    pipe = joblib.load(ROOT / "best_pipe.joblib")
+    pipe = joblib.load(ROOT / "models" / "best_pipe.joblib")
     d = load(raw_path)
     auc = verify(d, pipe)
     lines = d[~d["is_canceled"]]

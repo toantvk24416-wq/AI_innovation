@@ -70,7 +70,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Không cấu hình gì thêm thì các trang dùng file CSV có sẵn. Muốn dùng BigQuery và chatbot, chạy `python make_secrets.py` để tạo
+Không cấu hình gì thêm thì các trang dùng file CSV có sẵn. Muốn dùng BigQuery và chatbot, chạy `python scripts/make_secrets.py` để tạo
 `.streamlit/secrets.toml` (khóa service account + `GEMINI_API_KEY` hoặc `GROQ_API_KEY`).
 **Không đưa file này lên GitHub.** Không có khóa AI thì Trợ lý đơn hàng tự dùng câu mẫu.
 
@@ -94,16 +94,16 @@ Script làm các việc sau:
 
 ```
 app.py              điểm vào, menu và trang New order prediction
-overview.py         trang Overview, giao diện chung
-ranking.py          trang Route ranking
-assistant.py        trang Order assistant
-promise.py          trang Promise and evaluation
-savings.py          trang Savings estimate
-chatbot.py          trang Data assistant (Text-to-SQL)
-ontime/             các hàm AI theo tab Hợp đồng, khung LLM, nhật ký duyệt
-scripts/            script dựng dữ liệu
-data/, models/      dữ liệu và mô hình đã dựng sẵn
-best_pipe.joblib    mô hình XGBoost cảnh báo trễ (lưu lại để chạy với xgboost 3.4.1)
+views/overview.py  trang Overview, giao diện chung
+views/ranking.py   trang Route ranking
+views/assistant.py trang Order assistant
+views/promise.py   trang Promise and evaluation
+views/savings.py   trang Savings estimate
+views/chatbot.py   trang Data assistant (Text-to-SQL)
+ontime/            các hàm AI theo tab Hợp đồng, khung LLM, nhật ký duyệt
+scripts/           build_artifacts.py (dựng dữ liệu), dml_check.py, make_secrets.py
+data/              dữ liệu đã dựng sẵn (đánh giá, hàng đợi, bảng luật, tuyến, tùy chọn form, bản đồ)
+models/            best_pipe.joblib (XGBoost cảnh báo trễ, lưu lại để chạy với xgboost 3.4.1) và 3 mô hình phân vị
 ```
 
 ## Giới hạn

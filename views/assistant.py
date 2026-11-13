@@ -10,7 +10,7 @@ import pandas as pd
 import streamlit as st
 
 from ontime import core, journal
-from overview import ACCENT, INK, MUTED, card_header, kpi_card, fmt_int, fmt_pct
+from views.overview import ACCENT, INK, MUTED, card_header, kpi_card, fmt_int, fmt_pct
 
 PAGE_CSS = f"""
 <style>

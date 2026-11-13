@@ -15,8 +15,7 @@ _BASE = Path(__file__).resolve().parent
 
 
 def _signature():
-    files = list(_BASE.glob("*.py")) + list((_BASE / "ontime").glob("*.py")) + list((_BASE / "data").glob("*"))
-    files += [_BASE / "options.json", _BASE / "route_risk.csv", _BASE / "overview_monthly.csv"]
+    files = list(_BASE.glob("*.py")) + list((_BASE / "views").glob("*.py")) + list((_BASE / "ontime").glob("*.py")) + list((_BASE / "data").glob("*"))
     return tuple(sorted((f.name, f.stat().st_mtime) for f in files if f.is_file() and ".db" not in f.name))
 
 
@@ -24,18 +23,18 @@ _sig = _signature()
 if getattr(sys, "_ontime_sig", None) != _sig:
     for _name, _mod in list(sys.modules.items()):
         _file = getattr(_mod, "__file__", None)
-        if _file and _name != "__main__" and Path(_file).resolve().parent in (_BASE, _BASE / "ontime"):
+        if _file and _name != "__main__" and Path(_file).resolve().parent in (_BASE, _BASE / "views", _BASE / "ontime"):
             sys.modules.pop(_name, None)
     st.cache_data.clear()
     st.cache_resource.clear()
     sys._ontime_sig = _sig
 
-from overview import ACCENT, F, INK, apply_style, card_header, clean, page_overview, sidebar_nav, fmt_pct
-from ranking import page_ranking
-from chatbot import page_chatbot
-from assistant import page_assistant
-from promise import page_promise
-from savings import page_savings
+from views.overview import ACCENT, F, INK, apply_style, card_header, clean, page_overview, sidebar_nav, fmt_pct
+from views.ranking import page_ranking
+from views.chatbot import page_chatbot
+from views.assistant import page_assistant
+from views.promise import page_promise
+from views.savings import page_savings
 from ontime import core
 
 st.set_page_config(page_title="DataCo Delivery Risk", page_icon="🚚", layout="wide")
@@ -53,25 +52,25 @@ TIER_VI = {t: t for t in TIER_ORDER}   # tier names are already English
 
 @st.cache_resource
 def load_model():
-    return joblib.load(BASE / "best_pipe.joblib")
+    return joblib.load(BASE / "models" / "best_pipe.joblib")
 
 
 @st.cache_data
 def load_options():
-    return json.loads((BASE / "options.json").read_text(encoding="utf-8"))
+    return json.loads((BASE / "data" / "options.json").read_text(encoding="utf-8"))
 
 
 @st.cache_data
 def load_routes():
-    df = pd.read_csv(BASE / "route_risk.csv")
+    df = pd.read_csv(BASE / "data" / "route_risk.csv")
     df["risk_tier_vi"] = df["risk_tier"].map(TIER_VI).fillna(df["risk_tier"])
     return df
 
 
 def check_files():
-    missing = [f for f in ["best_pipe.joblib", "options.json", "route_risk.csv"] if not (BASE / f).exists()]
+    missing = [f for f in ["models/best_pipe.joblib", "data/options.json", "data/route_risk.csv"] if not (BASE / f).exists()]
     if missing:
-        st.error("Missing files: " + ", ".join(missing) + ". Put them in the same folder as app.py.")
+        st.error("Missing files: " + ", ".join(missing) + ". Keep the folder layout of the repository (app.py, views/, data/, models/).")
         st.stop()
 
 

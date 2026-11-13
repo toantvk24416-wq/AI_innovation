@@ -9,7 +9,7 @@ import pandas as pd
 import streamlit as st
 
 from ontime import core
-from overview import ACCENT, INK, MODE_ORDER, MUTED, F, card_header, clean, kpi_card, fmt_int, fmt_pct
+from views.overview import ACCENT, INK, MODE_ORDER, MUTED, F, card_header, clean, kpi_card, fmt_int, fmt_pct
 
 PAGE_CSS = f"""
 <style>

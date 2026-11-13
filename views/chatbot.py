@@ -15,7 +15,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from overview import ACCENT, INK, MUTED, _bigquery_client, clean
+from views.overview import ACCENT, INK, MUTED, _bigquery_client, clean
 
 PROJECT = "dw-dataco-513010"
 DATASET = f"{PROJECT}.gold"
@@ -312,7 +312,8 @@ def ask_sql(question, history, error=None, bad_sql=None):
 def clean_text(s):
     """Normalise the AI text: no long dashes, no space before % (57.3 % -> 57.3%)."""
     s = (s or "").replace("—", "-").replace("–", "-")
-    return re.sub(r"(?<=\d)\s+%", "%", s)           # "57.3 %" -> "57.3%"
+    s = re.sub(r"(?<=\d)\s+%", "%", s)           # "57.3 %" -> "57.3%"
+    return s.replace("$", "\\$")                   # st.markdown would read two "$" as a LaTeX formula
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -481,7 +482,7 @@ def page_chatbot():
         ready = False
     if not ready:
         st.warning("No AI API key (Groq or Gemini) or BigQuery key in .streamlit/secrets.toml. "
-                   "Run `python make_secrets.py` and reopen the app.")
+                   "Run `python scripts/make_secrets.py` and reopen the app.")
         return
 
     history = st.session_state.setdefault("chat", [])

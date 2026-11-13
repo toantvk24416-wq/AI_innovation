@@ -27,7 +27,7 @@ DATA = BASE / "data"
 # ------------------------------------------------------------------ load data (read once, kept in memory)
 @st.cache_resource(show_spinner="Loading the model...")
 def load_model():
-    return joblib.load(BASE / "best_pipe.joblib")
+    return joblib.load(BASE / "models" / "best_pipe.joblib")
 
 
 @st.cache_resource(show_spinner=False)
@@ -187,5 +187,5 @@ def assist_order(order, use_llm=True):
 
 
 def ask(question, history=None):
-    from chatbot import answer
+    from views.chatbot import answer
     return answer(question, history or [])

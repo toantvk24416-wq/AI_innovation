@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from overview import (ACCENT, BG, INK, MODE_ORDER, MUTED, TIER_COLOR, TIER_ORDER,
+from views.overview import (ACCENT, BG, INK, MODE_ORDER, MUTED, TIER_COLOR, TIER_ORDER,
                       F, card_header, clean, kpi_card, load_mode_days, load_route_risk, fmt_int, fmt_pct)
 
 # ============================================================ 1. HẰNG SỐ
@@ -109,8 +109,8 @@ def money_txt(x):
 
 @st.cache_data
 def load_world():
-    from overview import BASE
-    return json.loads((BASE / WORLD_FILE).read_text(encoding="utf-8"))
+    from views.overview import BASE
+    return json.loads((BASE / "data" / WORLD_FILE).read_text(encoding="utf-8"))
 
 
 # ============================================================ 3. BIỂU ĐỒ

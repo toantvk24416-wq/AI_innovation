@@ -89,7 +89,7 @@ def check_output(out, allowed):
 # ------------------------------------------------------------------ step 3: call the LLM
 def call_llm(system, prompt, json_mode=True):
     """Calls the LLM through the providers configured for the chatbot (Gemini, Groq). Over 8 seconds: retry once."""
-    from chatbot import _generate          # shares API keys and provider fallback with the chatbot
+    from views.chatbot import _generate          # shares API keys and provider fallback with the chatbot
     last = None
     for _ in range(2):
         try:
