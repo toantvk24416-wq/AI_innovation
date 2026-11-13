@@ -1,6 +1,6 @@
-ma,dieu_kien,mo_ta_dieu_kien,hanh_dong,nguoi_thuc_hien,bao_khach
-R1,shipping_mode == 'First Class' and scheduled_shipping_days < 2,First Class đang hẹn 1 ngày,Cập nhật ngày hẹn giao thành 2 ngày và báo khách ngay,Hệ thống tự áp; CSKH báo khách,1
-R2,risk_tier == 'Cao' and order_value >= @top20_value,Rủi ro Cao và giá trị đơn thuộc top 20%,Ưu tiên đóng gói và xuất kho trong ca hiện tại; cân nhắc đổi phương thức,Quản lý vận hành; Kho,0
-R3,risk_tier == 'Cao',Rủi ro Cao,Báo trước cho khách ngày giao theo P80 (người duyệt mới gửi); đề xuất phương thức khác nếu khách cần gấp,CSKH,1
-R4,risk_tier == 'Thấp',Rủi ro Thấp,"Không làm gì, tránh làm phiền khách",-,0
-R5,risk_tier == 'Trung bình',Rủi ro Trung bình,Gửi tin chủ động xác nhận ngày giao theo P80,CSKH,1
+code,condition,condition_desc,action,owner,notify_customer
+R1,shipping_mode == 'First Class' and scheduled_shipping_days < 2,First Class currently promised at 1 day,Update the promised date to 2 days and notify the customer now,System applies it; customer service notifies,1
+R2,risk_tier == 'High' and order_value >= @top20_value,High risk and order value in the top 20%,Prioritise packing and dispatch in the current shift; consider switching shipping mode,Operations manager; Warehouse,0
+R3,risk_tier == 'High',High risk,Tell the customer the P80 delivery date in advance (sent only after a reviewer approves); suggest another shipping mode if the customer is in a hurry,Customer service,1
+R4,risk_tier == 'Low',Low risk,"Do nothing, avoid bothering the customer",-,0
+R5,risk_tier == 'Medium',Medium risk,Send a proactive message confirming the P80 delivery date,Customer service,1

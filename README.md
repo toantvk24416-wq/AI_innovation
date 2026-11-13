@@ -8,13 +8,13 @@ Dữ liệu: bộ DataCo Smart Supply Chain (2015-2018), xử lý qua tầng Bro
 
 | Màn hình | Làm gì | Yêu cầu (Sheet PCCV / Mục 5) |
 |---|---|---|
-| Tổng quan | Tỷ lệ trễ theo thời gian, phương thức, thị trường | Bản demo có sẵn |
-| Xếp hạng tuyến | Bản đồ tuyến, ma trận ưu tiên, bản đồ nhiệt, bảng 92 tuyến | Wireframe 9.1 (bảng tuyến), Mục 5.2 |
-| Dự báo đơn mới | Form nhập đơn, xác suất trễ, **ngày hẹn đề xuất P80**, lý do SHAP, việc nên làm | 9.2 (form nhập đơn), 9.4 (ngày hẹn đề xuất) |
-| **Trợ lý đơn hàng** | Hàng đợi đơn Cao/Trung bình xếp theo tiền rủi ro kỳ vọng, chi tiết đơn, tin nhắn nháp, nút Phê duyệt / Từ chối, nhật ký duyệt, 3 đơn mẫu để demo | 5.2, 5.5, wireframe 9.1 (hàng đợi, chi tiết đơn), 9.2 (3 đơn demo) |
-| **Ngày hẹn và đánh giá** | Bảng P50/P80/P90, mô hình phân vị so với bảng phân vị, backtest các cách hẹn, Precision@K, SHAP toàn cục | 5.1, 6.1, 6.2 |
-| **Ước tính tiết kiệm** | 3 kịch bản thấp/cơ sở/cao, chi phí lấy từ bảng chi phí xử lý đơn (việc 4.3) | 9.4, dùng cho 7.1 và 7.4 |
-| Trợ lý dữ liệu | Hỏi tiếng Việt, AI viết SQL chỉ đọc trên tầng Gold, hiện câu trả lời + biểu đồ + bảng + câu SQL | 5.6, wireframe 9.1 (chatbot) |
+| Overview (Tổng quan) | Tỷ lệ trễ theo thời gian, phương thức, thị trường | Bản demo có sẵn |
+| Route ranking (Xếp hạng tuyến) | Bản đồ tuyến, ma trận ưu tiên, bản đồ nhiệt, bảng 92 tuyến | Wireframe 9.1 (bảng tuyến), Mục 5.2 |
+| New order prediction (Dự báo đơn mới) | Form nhập đơn, xác suất trễ, **ngày hẹn đề xuất P80**, lý do SHAP, việc nên làm | 9.2 (form nhập đơn), 9.4 (ngày hẹn đề xuất) |
+| **Order assistant (Trợ lý đơn hàng)** | Hàng đợi đơn Cao/Trung bình xếp theo tiền rủi ro kỳ vọng, chi tiết đơn, tin nhắn nháp, nút Phê duyệt / Từ chối, nhật ký duyệt, 3 đơn mẫu để demo | 5.2, 5.5, wireframe 9.1 (hàng đợi, chi tiết đơn), 9.2 (3 đơn demo) |
+| **Promise and evaluation (Ngày hẹn và đánh giá)** | Bảng P50/P80/P90, mô hình phân vị so với bảng phân vị, backtest các cách hẹn, Precision@K, SHAP toàn cục | 5.1, 6.1, 6.2 |
+| **Savings estimate (Ước tính tiết kiệm)** | 3 kịch bản thấp/cơ sở/cao, tính theo mục 7.4 của báo cáo (chi phí 1 đơn trễ = phút xử lý + hoàn hàng) | 9.4, dùng cho 7.1 và 7.4 |
+| Data assistant (Trợ lý dữ liệu) | Hỏi bằng tiếng Anh, AI viết SQL chỉ đọc trên tầng Gold, hiện câu trả lời + biểu đồ + bảng + câu SQL | 5.6, wireframe 9.1 (chatbot) |
 
 Các hàm theo tab **Hợp đồng** của Sheet nằm trong `ontime/core.py`:
 
@@ -93,13 +93,13 @@ Script làm các việc sau:
 ## Cấu trúc thư mục
 
 ```
-app.py              điểm vào, menu và trang Dự báo đơn mới
-overview.py         trang Tổng quan, giao diện chung
-ranking.py          trang Xếp hạng tuyến
-assistant.py        trang Trợ lý đơn hàng
-promise.py          trang Ngày hẹn và đánh giá
-savings.py          trang Ước tính tiết kiệm
-chatbot.py          trang Trợ lý dữ liệu (Text-to-SQL)
+app.py              điểm vào, menu và trang New order prediction
+overview.py         trang Overview, giao diện chung
+ranking.py          trang Route ranking
+assistant.py        trang Order assistant
+promise.py          trang Promise and evaluation
+savings.py          trang Savings estimate
+chatbot.py          trang Data assistant (Text-to-SQL)
 ontime/             các hàm AI theo tab Hợp đồng, khung LLM, nhật ký duyệt
 scripts/            script dựng dữ liệu
 data/, models/      dữ liệu và mô hình đã dựng sẵn

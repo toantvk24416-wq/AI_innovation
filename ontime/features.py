@@ -1,4 +1,6 @@
-"""Phần dùng chung giữa script dựng dữ liệu và app: 18 biến đầu vào, mức rủi ro, SHAP và nhãn lý do tiếng Việt."""
+"""Shared by the build script and the app: the 18 order-time features, risk tiers, SHAP and English reason labels."""
+import calendar
+
 import numpy as np
 import pandas as pd
 import xgboost as xgb
@@ -10,38 +12,39 @@ NUM_COLS = ["scheduled_shipping_days", "quantity", "unit_price", "sales", "disco
 FEATURES = CAT_COLS + NUM_COLS
 QUANTILES = {"p50": 0.5, "p80": 0.8, "p90": 0.9}
 MODEL_VERSION = "xgb_2026-11"
-DOW_VI = {1: "Chủ nhật", 2: "thứ Hai", 3: "thứ Ba", 4: "thứ Tư", 5: "thứ Năm", 6: "thứ Sáu", 7: "thứ Bảy"}
+DOW_EN = {1: "Sunday", 2: "Monday", 3: "Tuesday", 4: "Wednesday", 5: "Thursday", 6: "Friday", 7: "Saturday"}
 
 
 def risk_tier(p):
-    """Mức rủi ro của đơn: Cao từ 60%, Trung bình từ 30%, Thấp dưới 30%."""
+    """Order risk tier: High from 60%, Medium from 30%, Low below 30%."""
     p = np.asarray(p, dtype=float)
-    out = np.where(p >= 0.6, "Cao", np.where(p >= 0.3, "Trung bình", "Thấp"))
+    out = np.where(p >= 0.6, "High", np.where(p >= 0.3, "Medium", "Low"))
     return out if out.ndim else str(out)
 
 
 def reason_label(feature, r):
-    """Từ điển đổi biến gốc thành câu tiếng Việt (quy tắc, không dùng LLM, để cùng yếu tố luôn cùng tên gọi)."""
+    """Maps a raw feature to a plain English sentence (rule-based, no LLM, so a factor always has the same wording)."""
     m, d = r["shipping_mode"], int(r["scheduled_shipping_days"])
+    days = "same-day" if d == 0 else f"{d}-day"
     return {
-        "shipping_mode": f"{m} hẹn giao {d} ngày, thường bị vượt",
-        "scheduled_shipping_days": f"Hạn giao {d} ngày ngắn so với thực tế của tuyến",
-        "order_hour": f"Đặt hàng lúc {int(r['order_hour'])}h",
-        "order_country": f"Giao tới {r['order_country']}",
-        "order_region": f"Khu vực nhận {r['order_region']}",
-        "market": f"Thị trường {r['market']}",
-        "category_name": f"Nhóm hàng {r['category_name']}",
-        "department_name": f"Bộ phận {r['department_name']}",
-        "customer_segment": f"Khách hàng nhóm {r['customer_segment']}",
-        "payment_type": f"Thanh toán {r['payment_type']}",
-        "order_month": f"Đặt trong tháng {int(r['order_month'])}",
-        "order_day_of_week": f"Đặt vào {DOW_VI[int(r['order_day_of_week'])]}",
-        "order_is_weekend": "Đặt vào cuối tuần" if r["order_is_weekend"] else "Đặt vào ngày thường",
-        "quantity": f"Số lượng {int(r['quantity'])} sản phẩm",
-        "unit_price": f"Đơn giá {r['unit_price']:.2f} USD",
-        "sales": f"Doanh số dòng hàng {r['sales']:.2f} USD",
-        "order_item_total": f"Giá trị dòng hàng {r['order_item_total']:.2f} USD",
-        "discount_rate": f"Giảm giá {r['discount_rate'] * 100:.0f}%",
+        "shipping_mode": f"{m} promises {days} delivery, often exceeded",
+        "scheduled_shipping_days": f"{days.capitalize()} deadline is short compared with the route's real delivery time",
+        "order_hour": f"Ordered at {int(r['order_hour'])}:00",
+        "order_country": f"Ships to {r['order_country']}",
+        "order_region": f"Destination region: {r['order_region']}",
+        "market": f"Market: {r['market']}",
+        "category_name": f"Category: {r['category_name']}",
+        "department_name": f"Department: {r['department_name']}",
+        "customer_segment": f"Customer segment: {r['customer_segment']}",
+        "payment_type": f"Payment: {r['payment_type']}",
+        "order_month": f"Ordered in {calendar.month_name[int(r['order_month'])]}",
+        "order_day_of_week": f"Ordered on {DOW_EN[int(r['order_day_of_week'])]}",
+        "order_is_weekend": "Ordered on a weekend" if r["order_is_weekend"] else "Ordered on a weekday",
+        "quantity": f"Quantity: {int(r['quantity'])}",
+        "unit_price": f"Unit price: {r['unit_price']:.2f} USD",
+        "sales": f"Line sales: {r['sales']:.2f} USD",
+        "order_item_total": f"Line total: {r['order_item_total']:.2f} USD",
+        "discount_rate": f"Discount: {r['discount_rate'] * 100:.0f}%",
     }[feature]
 
 
@@ -61,7 +64,7 @@ def shap_by_feature(pipe, X):
 
 
 def top_reasons(row, shap_row, k=3):
-    """Tối đa k yếu tố làm TĂNG rủi ro (SHAP dương lớn nhất), kèm nhãn tiếng Việt."""
+    """Up to k factors that INCREASE the risk (largest positive SHAP), with English labels."""
     pos = shap_row[shap_row > 0].sort_values(ascending=False).head(k)
-    return [{"rank": i + 1, "feature": f, "label_vi": reason_label(f, row), "shap": round(float(v), 3)}
+    return [{"rank": i + 1, "feature": f, "label": reason_label(f, row), "shap": round(float(v), 3)}
             for i, (f, v) in enumerate(pos.items())]

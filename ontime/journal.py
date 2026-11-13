@@ -1,29 +1,29 @@
-"""Nhật ký duyệt tin nhắn (Mục 5.5): ai duyệt, lúc nào, sửa gì. Lưu SQLite cạnh app (data/nhat_ky_duyet.db)."""
+"""Message review log (Section 5.5): who reviewed, when, what was edited. Stored in SQLite next to the app (data/review_log.db)."""
 import sqlite3
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
-DB = Path(__file__).resolve().parents[1] / "data" / "nhat_ky_duyet.db"
+DB = Path(__file__).resolve().parents[1] / "data" / "review_log.db"
 
 
 def _conn():
     c = sqlite3.connect(DB)
-    c.execute("""CREATE TABLE IF NOT EXISTS nhat_ky (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, thoi_gian TEXT, ma_don TEXT, nguoi_duyet TEXT, quyet_dinh TEXT,
-        nguon_ban_nhap TEXT, ban_nhap TEXT, ban_cuoi TEXT, da_sua INTEGER)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS review_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT, order_id TEXT, reviewer TEXT, decision TEXT,
+        draft_source TEXT, draft TEXT, final_text TEXT, edited INTEGER)""")
     return c
 
 
-def add(ma_don, nguoi_duyet, quyet_dinh, nguon, ban_nhap, ban_cuoi):
+def add(order_id, reviewer, decision, source, draft, final_text):
     with _conn() as c:
-        c.execute("INSERT INTO nhat_ky (thoi_gian, ma_don, nguoi_duyet, quyet_dinh, nguon_ban_nhap, ban_nhap, ban_cuoi, da_sua)"
+        c.execute("INSERT INTO review_log (ts, order_id, reviewer, decision, draft_source, draft, final_text, edited)"
                   " VALUES (?,?,?,?,?,?,?,?)",
-                  (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), str(ma_don), nguoi_duyet, quyet_dinh, nguon,
-                   ban_nhap, ban_cuoi, int(ban_nhap.strip() != ban_cuoi.strip())))
+                  (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), str(order_id), reviewer, decision, source,
+                   draft, final_text, int(draft.strip() != final_text.strip())))
 
 
 def read():
     with _conn() as c:
-        return pd.read_sql("SELECT * FROM nhat_ky ORDER BY id DESC", c)
+        return pd.read_sql("SELECT * FROM review_log ORDER BY id DESC", c)

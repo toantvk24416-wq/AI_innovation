@@ -1,281 +1,281 @@
 {
-  "auc_test": 0.7838,
-  "split_date": "2017-07-10",
-  "n_test_orders": 12581,
-  "promise": {
-    "pinball": {
-      "model": {
-        "p50": 0.5251,
-        "p80": 0.3327,
-        "p90": 0.1689
-      },
-      "table": {
-        "p50": 0.4916,
-        "p80": 0.324,
-        "p90": 0.1631
-      }
-    },
-    "coverage_p80": {
-      "model": {
-        "First Class": 1.0,
-        "Same Day": 1.0,
-        "Second Class": 0.9924,
-        "Standard Class": 0.993,
-        "Tất cả": 0.9943
-      },
-      "table": {
-        "First Class": 1.0,
-        "Same Day": 1.0,
-        "Second Class": 0.9063,
-        "Standard Class": 0.9716,
-        "Tất cả": 0.9645
-      }
-    },
-    "chosen": "table"
+ "auc_test": 0.7838,
+ "split_date": "2017-07-10",
+ "n_test_orders": 12581,
+ "promise": {
+  "pinball": {
+   "model": {
+    "p50": 0.5251,
+    "p80": 0.3327,
+    "p90": 0.1689
+   },
+   "table": {
+    "p50": 0.4916,
+    "p80": 0.324,
+    "p90": 0.1631
+   }
   },
-  "backtest": [
-    {
-      "cach_hen": "Như cũ",
-      "phuong_thuc": "First Class",
-      "so_don": 1900,
-      "ty_le_tre_so_voi_hen": 1.0,
-      "ngay_hen_tb": 1.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "Như cũ",
-      "phuong_thuc": "Same Day",
-      "so_don": 702,
-      "ty_le_tre_so_voi_hen": 0.5328,
-      "ngay_hen_tb": 0.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "Như cũ",
-      "phuong_thuc": "Second Class",
-      "so_don": 2471,
-      "ty_le_tre_so_voi_hen": 0.8025,
-      "ngay_hen_tb": 2.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "Như cũ",
-      "phuong_thuc": "Standard Class",
-      "so_don": 7508,
-      "ty_le_tre_so_voi_hen": 0.3957,
-      "ngay_hen_tb": 4.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "Như cũ",
-      "phuong_thuc": "Tất cả",
-      "so_don": 12581,
-      "ty_le_tre_so_voi_hen": 0.5745,
-      "ngay_hen_tb": 2.93,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "First Class hẹn 2 ngày",
-      "phuong_thuc": "First Class",
-      "so_don": 1900,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 2.0,
-      "ngay_hen_them_tb": 1.0
-    },
-    {
-      "cach_hen": "First Class hẹn 2 ngày",
-      "phuong_thuc": "Same Day",
-      "so_don": 702,
-      "ty_le_tre_so_voi_hen": 0.5328,
-      "ngay_hen_tb": 0.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "First Class hẹn 2 ngày",
-      "phuong_thuc": "Second Class",
-      "so_don": 2471,
-      "ty_le_tre_so_voi_hen": 0.8025,
-      "ngay_hen_tb": 2.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "First Class hẹn 2 ngày",
-      "phuong_thuc": "Standard Class",
-      "so_don": 7508,
-      "ty_le_tre_so_voi_hen": 0.3957,
-      "ngay_hen_tb": 4.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "First Class hẹn 2 ngày",
-      "phuong_thuc": "Tất cả",
-      "so_don": 12581,
-      "ty_le_tre_so_voi_hen": 0.4235,
-      "ngay_hen_tb": 3.08,
-      "ngay_hen_them_tb": 0.15
-    },
-    {
-      "cach_hen": "Hẹn theo P50",
-      "phuong_thuc": "First Class",
-      "so_don": 1900,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 2.0,
-      "ngay_hen_them_tb": 1.0
-    },
-    {
-      "cach_hen": "Hẹn theo P50",
-      "phuong_thuc": "Same Day",
-      "so_don": 702,
-      "ty_le_tre_so_voi_hen": 0.4601,
-      "ngay_hen_tb": 0.13,
-      "ngay_hen_them_tb": 0.13
-    },
-    {
-      "cach_hen": "Hẹn theo P50",
-      "phuong_thuc": "Second Class",
-      "so_don": 2471,
-      "ty_le_tre_so_voi_hen": 0.4047,
-      "ngay_hen_tb": 4.0,
-      "ngay_hen_them_tb": 2.0
-    },
-    {
-      "cach_hen": "Hẹn theo P50",
-      "phuong_thuc": "Standard Class",
-      "so_don": 7508,
-      "ty_le_tre_so_voi_hen": 0.3957,
-      "ngay_hen_tb": 4.0,
-      "ngay_hen_them_tb": 0.0
-    },
-    {
-      "cach_hen": "Hẹn theo P50",
-      "phuong_thuc": "Tất cả",
-      "so_don": 12581,
-      "ty_le_tre_so_voi_hen": 0.3413,
-      "ngay_hen_tb": 3.48,
-      "ngay_hen_them_tb": 0.55
-    },
-    {
-      "cach_hen": "Hẹn theo P80",
-      "phuong_thuc": "First Class",
-      "so_don": 1900,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 2.0,
-      "ngay_hen_them_tb": 1.0
-    },
-    {
-      "cach_hen": "Hẹn theo P80",
-      "phuong_thuc": "Same Day",
-      "so_don": 702,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 1.0,
-      "ngay_hen_them_tb": 1.0
-    },
-    {
-      "cach_hen": "Hẹn theo P80",
-      "phuong_thuc": "Second Class",
-      "so_don": 2471,
-      "ty_le_tre_so_voi_hen": 0.1117,
-      "ngay_hen_tb": 5.42,
-      "ngay_hen_them_tb": 3.42
-    },
-    {
-      "cach_hen": "Hẹn theo P80",
-      "phuong_thuc": "Standard Class",
-      "so_don": 7508,
-      "ty_le_tre_so_voi_hen": 0.0213,
-      "ngay_hen_tb": 5.88,
-      "ngay_hen_them_tb": 1.88
-    },
-    {
-      "cach_hen": "Hẹn theo P80",
-      "phuong_thuc": "Tất cả",
-      "so_don": 12581,
-      "ty_le_tre_so_voi_hen": 0.0347,
-      "ngay_hen_tb": 4.93,
-      "ngay_hen_them_tb": 2.0
-    },
-    {
-      "cach_hen": "Hẹn theo P90",
-      "phuong_thuc": "First Class",
-      "so_don": 1900,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 2.0,
-      "ngay_hen_them_tb": 1.0
-    },
-    {
-      "cach_hen": "Hẹn theo P90",
-      "phuong_thuc": "Same Day",
-      "so_don": 702,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 1.0,
-      "ngay_hen_them_tb": 1.0
-    },
-    {
-      "cach_hen": "Hẹn theo P90",
-      "phuong_thuc": "Second Class",
-      "so_don": 2471,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 6.0,
-      "ngay_hen_them_tb": 4.0
-    },
-    {
-      "cach_hen": "Hẹn theo P90",
-      "phuong_thuc": "Standard Class",
-      "so_don": 7508,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 6.0,
-      "ngay_hen_them_tb": 2.0
-    },
-    {
-      "cach_hen": "Hẹn theo P90",
-      "phuong_thuc": "Tất cả",
-      "so_don": 12581,
-      "ty_le_tre_so_voi_hen": 0.0,
-      "ngay_hen_tb": 5.12,
-      "ngay_hen_them_tb": 2.19
-    }
-  ],
-  "precision_at_k": {
-    "Tất cả phương thức": {
-      "Top 10/ngày, theo tiền rủi ro kỳ vọng": 0.9209,
-      "Top 20/ngày, theo tiền rủi ro kỳ vọng": 0.825,
-      "Top 50/ngày, theo tiền rủi ro kỳ vọng": 0.6218,
-      "Top 10/ngày, theo xác suất trễ": 0.9714,
-      "Top 20/ngày, theo xác suất trễ": 0.8799,
-      "Top 50/ngày, theo xác suất trễ": 0.6307,
-      "Tỷ lệ trễ nền (chọn ngẫu nhiên)": 0.5745,
-      "Số ngày": 206
-    },
-    "Bỏ First Class (đã xử lý bằng luật)": {
-      "Top 10/ngày, theo tiền rủi ro kỳ vọng": 0.7524,
-      "Top 20/ngày, theo tiền rủi ro kỳ vọng": 0.6459,
-      "Top 50/ngày, theo tiền rủi ro kỳ vọng": 0.5147,
-      "Top 10/ngày, theo xác suất trễ": 0.8063,
-      "Top 20/ngày, theo xác suất trễ": 0.6876,
-      "Top 50/ngày, theo xác suất trễ": 0.517,
-      "Tỷ lệ trễ nền (chọn ngẫu nhiên)": 0.4988,
-      "Số ngày": 206
-    }
+  "coverage_p80": {
+   "model": {
+    "First Class": 1.0,
+    "Same Day": 1.0,
+    "Second Class": 0.9924,
+    "Standard Class": 0.993,
+    "All": 0.9943
+   },
+   "table": {
+    "First Class": 1.0,
+    "Same Day": 1.0,
+    "Second Class": 0.9063,
+    "Standard Class": 0.9716,
+    "All": 0.9645
+   }
   },
-  "shap_global": {
-    "shipping_mode": 2.042799949645996,
-    "order_hour": 0.25609999895095825,
-    "scheduled_shipping_days": 0.22869999706745148,
-    "order_country": 0.03539999946951866,
-    "order_region": 0.021900000050663948,
-    "order_item_total": 0.021800000220537186,
-    "sales": 0.019300000742077827,
-    "order_day_of_week": 0.016300000250339508,
-    "payment_type": 0.016200000420212746,
-    "order_month": 0.015300000086426735,
-    "discount_rate": 0.012400000356137753,
-    "customer_segment": 0.011800000444054604,
-    "department_name": 0.008500000461935997,
-    "unit_price": 0.006800000090152025,
-    "category_name": 0.006300000008195639,
-    "order_is_weekend": 0.004699999932199717,
-    "market": 0.0024999999441206455,
-    "quantity": 0.0008999999845400453
+  "chosen": "table"
+ },
+ "backtest": [
+  {
+   "way": "Current",
+   "mode": "First Class",
+   "n_orders": 1900,
+   "late_vs_promise": 1.0,
+   "avg_promise_days": 1.0,
+   "avg_extra_days": 0.0
   },
-  "model_version": "xgb_2026-11"
+  {
+   "way": "Current",
+   "mode": "Same Day",
+   "n_orders": 702,
+   "late_vs_promise": 0.5328,
+   "avg_promise_days": 0.0,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "Current",
+   "mode": "Second Class",
+   "n_orders": 2471,
+   "late_vs_promise": 0.8025,
+   "avg_promise_days": 2.0,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "Current",
+   "mode": "Standard Class",
+   "n_orders": 7508,
+   "late_vs_promise": 0.3957,
+   "avg_promise_days": 4.0,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "Current",
+   "mode": "All",
+   "n_orders": 12581,
+   "late_vs_promise": 0.5745,
+   "avg_promise_days": 2.93,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "First Class 2 days",
+   "mode": "First Class",
+   "n_orders": 1900,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 2.0,
+   "avg_extra_days": 1.0
+  },
+  {
+   "way": "First Class 2 days",
+   "mode": "Same Day",
+   "n_orders": 702,
+   "late_vs_promise": 0.5328,
+   "avg_promise_days": 0.0,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "First Class 2 days",
+   "mode": "Second Class",
+   "n_orders": 2471,
+   "late_vs_promise": 0.8025,
+   "avg_promise_days": 2.0,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "First Class 2 days",
+   "mode": "Standard Class",
+   "n_orders": 7508,
+   "late_vs_promise": 0.3957,
+   "avg_promise_days": 4.0,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "First Class 2 days",
+   "mode": "All",
+   "n_orders": 12581,
+   "late_vs_promise": 0.4235,
+   "avg_promise_days": 3.08,
+   "avg_extra_days": 0.15
+  },
+  {
+   "way": "Promise P50",
+   "mode": "First Class",
+   "n_orders": 1900,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 2.0,
+   "avg_extra_days": 1.0
+  },
+  {
+   "way": "Promise P50",
+   "mode": "Same Day",
+   "n_orders": 702,
+   "late_vs_promise": 0.4601,
+   "avg_promise_days": 0.13,
+   "avg_extra_days": 0.13
+  },
+  {
+   "way": "Promise P50",
+   "mode": "Second Class",
+   "n_orders": 2471,
+   "late_vs_promise": 0.4047,
+   "avg_promise_days": 4.0,
+   "avg_extra_days": 2.0
+  },
+  {
+   "way": "Promise P50",
+   "mode": "Standard Class",
+   "n_orders": 7508,
+   "late_vs_promise": 0.3957,
+   "avg_promise_days": 4.0,
+   "avg_extra_days": 0.0
+  },
+  {
+   "way": "Promise P50",
+   "mode": "All",
+   "n_orders": 12581,
+   "late_vs_promise": 0.3413,
+   "avg_promise_days": 3.48,
+   "avg_extra_days": 0.55
+  },
+  {
+   "way": "Promise P80",
+   "mode": "First Class",
+   "n_orders": 1900,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 2.0,
+   "avg_extra_days": 1.0
+  },
+  {
+   "way": "Promise P80",
+   "mode": "Same Day",
+   "n_orders": 702,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 1.0,
+   "avg_extra_days": 1.0
+  },
+  {
+   "way": "Promise P80",
+   "mode": "Second Class",
+   "n_orders": 2471,
+   "late_vs_promise": 0.1117,
+   "avg_promise_days": 5.42,
+   "avg_extra_days": 3.42
+  },
+  {
+   "way": "Promise P80",
+   "mode": "Standard Class",
+   "n_orders": 7508,
+   "late_vs_promise": 0.0213,
+   "avg_promise_days": 5.88,
+   "avg_extra_days": 1.88
+  },
+  {
+   "way": "Promise P80",
+   "mode": "All",
+   "n_orders": 12581,
+   "late_vs_promise": 0.0347,
+   "avg_promise_days": 4.93,
+   "avg_extra_days": 2.0
+  },
+  {
+   "way": "Promise P90",
+   "mode": "First Class",
+   "n_orders": 1900,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 2.0,
+   "avg_extra_days": 1.0
+  },
+  {
+   "way": "Promise P90",
+   "mode": "Same Day",
+   "n_orders": 702,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 1.0,
+   "avg_extra_days": 1.0
+  },
+  {
+   "way": "Promise P90",
+   "mode": "Second Class",
+   "n_orders": 2471,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 6.0,
+   "avg_extra_days": 4.0
+  },
+  {
+   "way": "Promise P90",
+   "mode": "Standard Class",
+   "n_orders": 7508,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 6.0,
+   "avg_extra_days": 2.0
+  },
+  {
+   "way": "Promise P90",
+   "mode": "All",
+   "n_orders": 12581,
+   "late_vs_promise": 0.0,
+   "avg_promise_days": 5.12,
+   "avg_extra_days": 2.19
+  }
+ ],
+ "precision_at_k": {
+  "All modes": {
+   "Top 10 per day, by expected revenue at risk": 0.9209,
+   "Top 20 per day, by expected revenue at risk": 0.825,
+   "Top 50 per day, by expected revenue at risk": 0.6218,
+   "Top 10 per day, by late probability": 0.9714,
+   "Top 20 per day, by late probability": 0.8799,
+   "Top 50 per day, by late probability": 0.6307,
+   "Baseline late rate (random pick)": 0.5745,
+   "Days": 206
+  },
+  "Excluding First Class (handled by rule)": {
+   "Top 10 per day, by expected revenue at risk": 0.7524,
+   "Top 20 per day, by expected revenue at risk": 0.6459,
+   "Top 50 per day, by expected revenue at risk": 0.5147,
+   "Top 10 per day, by late probability": 0.8063,
+   "Top 20 per day, by late probability": 0.6876,
+   "Top 50 per day, by late probability": 0.517,
+   "Baseline late rate (random pick)": 0.4988,
+   "Days": 206
+  }
+ },
+ "shap_global": {
+  "shipping_mode": 2.042799949645996,
+  "order_hour": 0.25609999895095825,
+  "scheduled_shipping_days": 0.22869999706745148,
+  "order_country": 0.03539999946951866,
+  "order_region": 0.021900000050663948,
+  "order_item_total": 0.021800000220537186,
+  "sales": 0.019300000742077827,
+  "order_day_of_week": 0.016300000250339508,
+  "payment_type": 0.016200000420212746,
+  "order_month": 0.015300000086426735,
+  "discount_rate": 0.012400000356137753,
+  "customer_segment": 0.011800000444054604,
+  "department_name": 0.008500000461935997,
+  "unit_price": 0.006800000090152025,
+  "category_name": 0.006300000008195639,
+  "order_is_weekend": 0.004699999932199717,
+  "market": 0.0024999999441206455,
+  "quantity": 0.0008999999845400453
+ },
+ "model_version": "xgb_2026-11"
 }

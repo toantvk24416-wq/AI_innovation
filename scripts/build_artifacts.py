@@ -161,7 +161,7 @@ def promise_models(train, test):
         res["pinball"][name] = {k: round(float(mean_pinball_loss(y, p[k], alpha=a)), 4) for k, a in QUANTILES.items()}
         cov = pd.Series(y <= np.ceil(p["p80"] - 1e-9)).groupby(test["shipping_mode"].to_numpy()).mean()
         res["coverage_p80"][name] = {m: round(float(v), 4) for m, v in cov.items()}
-        res["coverage_p80"][name]["Tất cả"] = round(float(np.mean(y <= np.ceil(p["p80"] - 1e-9))), 4)
+        res["coverage_p80"][name]["All"] = round(float(np.mean(y <= np.ceil(p["p80"] - 1e-9))), 4)
     better = res["pinball"]["model"]["p80"] < res["pinball"]["table"]["p80"]
     res["chosen"] = "model" if better else "table"
     print(f"Mô hình ngày hẹn: pinball P80 mô hình {res['pinball']['model']['p80']} "
@@ -206,21 +206,21 @@ def build_queue(test, pipe, models, table, chosen):
 def backtest(q):
     """6.1: so 3 cách hẹn giao trên đơn của tập kiểm tra (tỷ lệ trễ so với ngày hẹn và số ngày hẹn thêm)."""
     ways = {
-        "Như cũ": q["scheduled_shipping_days"],
-        "First Class hẹn 2 ngày": np.where(q["shipping_mode"] == "First Class", 2, q["scheduled_shipping_days"]),
-        "Hẹn theo P50": np.ceil(q["p50"] - 1e-9),
-        "Hẹn theo P80": q["promise_days"],
-        "Hẹn theo P90": np.ceil(q["p90"] - 1e-9),
+        "Current": q["scheduled_shipping_days"],
+        "First Class 2 days": np.where(q["shipping_mode"] == "First Class", 2, q["scheduled_shipping_days"]),
+        "Promise P50": np.ceil(q["p50"] - 1e-9),
+        "Promise P80": q["promise_days"],
+        "Promise P90": np.ceil(q["p90"] - 1e-9),
     }
     rows = []
     for name, days in ways.items():
         days = pd.Series(np.asarray(days), index=q.index)
         late = q["actual_days"] > days
-        for mode, idx in list(q.groupby("shipping_mode").groups.items()) + [("Tất cả", q.index)]:
-            rows.append({"cach_hen": name, "phuong_thuc": mode, "so_don": int(len(idx)),
-                         "ty_le_tre_so_voi_hen": round(float(late[idx].mean()), 4),
-                         "ngay_hen_tb": round(float(days[idx].mean()), 2),
-                         "ngay_hen_them_tb": round(float((days[idx] - q.loc[idx, "scheduled_shipping_days"]).mean()), 2)})
+        for mode, idx in list(q.groupby("shipping_mode").groups.items()) + [("All", q.index)]:
+            rows.append({"way": name, "mode": mode, "n_orders": int(len(idx)),
+                         "late_vs_promise": round(float(late[idx].mean()), 4),
+                         "avg_promise_days": round(float(days[idx].mean()), 2),
+                         "avg_extra_days": round(float((days[idx] - q.loc[idx, "scheduled_shipping_days"]).mean()), 2)})
     return rows
 
 
@@ -228,14 +228,14 @@ def precision_at_k(q, ks=(10, 20, 50)):
     """6.2: mỗi ngày nhân viên xử lý K đơn đầu hàng đợi thì bao nhiêu % thật sự trễ."""
     d = q.assign(day=pd.to_datetime(q["order_ts"]).dt.date)
     out = {}
-    for scope, sub in (("Tất cả phương thức", d), ("Bỏ First Class (đã xử lý bằng luật)", d[d["shipping_mode"] != "First Class"])):
+    for scope, sub in (("All modes", d), ("Excluding First Class (handled by rule)", d[d["shipping_mode"] != "First Class"])):
         out[scope] = {}
-        for sort_col, sort_name in (("exp_rev_at_risk", "theo tiền rủi ro kỳ vọng"), ("p_late", "theo xác suất trễ")):
+        for sort_col, sort_name in (("exp_rev_at_risk", "by expected revenue at risk"), ("p_late", "by late probability")):
             for k in ks:
                 top = sub.sort_values(sort_col, ascending=False).groupby("day").head(k)
-                out[scope][f"Top {k}/ngày, {sort_name}"] = round(float(top["is_late"].mean()), 4)
-        out[scope]["Tỷ lệ trễ nền (chọn ngẫu nhiên)"] = round(float(sub["is_late"].mean()), 4)
-        out[scope]["Số ngày"] = int(sub["day"].nunique())
+                out[scope][f"Top {k} per day, {sort_name}"] = round(float(top["is_late"].mean()), 4)
+        out[scope]["Baseline late rate (random pick)"] = round(float(sub["is_late"].mean()), 4)
+        out[scope]["Days"] = int(sub["day"].nunique())
     return out
 
 
@@ -270,10 +270,10 @@ def main(raw_path):
         "shap_global": shap_global.to_dict(), "model_version": MODEL_VERSION,
     }
     (ROOT / "data" / "evaluation.json").write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
-    print("Backtest (Tất cả):")
+    print("Backtest (All):")
     for r in ev["backtest"]:
-        if r["phuong_thuc"] == "Tất cả":
-            print(f"  {r['cach_hen']}: trễ so với hẹn {r['ty_le_tre_so_voi_hen']:.1%}, hẹn thêm {r['ngay_hen_them_tb']} ngày")
+        if r["mode"] == "All":
+            print(f"  {r['way']}: late vs promise {r['late_vs_promise']:.1%}, extra promised days {r['avg_extra_days']}")
     print("SHAP toàn cục:", shap_global.head(5).to_dict())
     print("Đã ghi data/ và models/.")
 
