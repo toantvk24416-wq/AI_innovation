@@ -1,4 +1,5 @@
 import json
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -6,6 +7,28 @@ import altair as alt
 import joblib
 import pandas as pd
 import streamlit as st
+
+# Streamlit Cloud pulls new code without restarting the process, so modules and cached data loaded earlier would
+# stay stale (ImportError or old data after a push). When a code or data file changed (and on the first run of a
+# process), drop the project's cached modules and the Streamlit caches. Normal reruns change nothing and stay fast.
+_BASE = Path(__file__).resolve().parent
+
+
+def _signature():
+    files = list(_BASE.glob("*.py")) + list((_BASE / "ontime").glob("*.py")) + list((_BASE / "data").glob("*"))
+    files += [_BASE / "options.json", _BASE / "route_risk.csv", _BASE / "overview_monthly.csv"]
+    return tuple(sorted((f.name, f.stat().st_mtime) for f in files if f.is_file() and ".db" not in f.name))
+
+
+_sig = _signature()
+if getattr(sys, "_ontime_sig", None) != _sig:
+    for _name, _mod in list(sys.modules.items()):
+        _file = getattr(_mod, "__file__", None)
+        if _file and _name != "__main__" and Path(_file).resolve().parent in (_BASE, _BASE / "ontime"):
+            sys.modules.pop(_name, None)
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    sys._ontime_sig = _sig
 
 from overview import ACCENT, F, INK, apply_style, card_header, clean, page_overview, sidebar_nav, fmt_pct
 from ranking import page_ranking
