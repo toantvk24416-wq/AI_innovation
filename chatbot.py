@@ -129,7 +129,8 @@ Trả về DUY NHẤT một JSON:
 ANSWER_RULES = """
 Bạn là trợ lý phân tích giao hàng. Dựa vào câu hỏi và bảng kết quả, trả lời bằng tiếng Việt:
 - Tối đa 3 câu ngắn, đi thẳng vào con số chính và một nhận xét có ích cho người vận hành.
-- Số viết kiểu Việt Nam: 65.752 đơn, 57,3%. Tỷ lệ 0-1 thì đổi ra % và làm tròn 1 chữ số. Tiền ghi USD.
+- Số viết kiểu Việt Nam: dấu chấm ngăn hàng nghìn, dấu PHẨY cho số thập phân, dính liền dấu %: 65.752 đơn, 57,3%, 100,0%.
+  Không viết "57.3 %" hay "100.0 %". Tỷ lệ 0-1 thì đổi ra % và làm tròn 1 chữ số. Tiền ghi USD.
 - Giọng bình tĩnh, khách quan như người phân tích. Không dùng từ cảm xúc như "báo động", "khẩn cấp", "cực kỳ".
 - Bối cảnh giúp giải thích: First Class cam kết giao 1 ngày nhưng thực tế luôn mất khoảng 2 ngày, nên vấn đề nằm ở mức cam kết
   chứ không hẳn ở vận hành. Chỉ nhắc khi liên quan.
@@ -308,11 +309,19 @@ def ask_sql(question, history, error=None, bad_sql=None):
     return out if isinstance(out, dict) else {"sql": None, "reply": str(out)}
 
 
+def clean_text(s):
+    """Chuẩn hóa chữ AI trả về: bỏ dấu gạch dài, số thập phân dùng dấu phẩy (100.0 % -> 100,0%).
+    Chỉ đổi số có 1-2 chữ số sau dấu chấm, nên 65.752 (hàng nghìn) giữ nguyên."""
+    s = (s or "").replace("—", "-").replace("–", "-")
+    s = re.sub(r"(?<=\d)\.(\d{1,2})(?!\d)", r",\1", s)
+    return re.sub(r"(?<=\d)\s+%", "%", s)
+
+
 @st.cache_data(ttl=3600, show_spinner=False)
 def ask_answer(question, sql, df):
     table = df.head(30).to_csv(index=False)
     prompt = f"Câu hỏi: {question}\n\nSQL đã chạy:\n{sql}\n\nKết quả ({len(df)} dòng, tối đa 30 dòng đầu):\n{table}"
-    return _generate(ANSWER_RULES + GLOSSARY, prompt, json_mode=False).strip().replace("—", "-").replace("–", "-")
+    return clean_text(_generate(ANSWER_RULES + GLOSSARY, prompt, json_mode=False).strip())
 
 
 # ------------------------------------------------------------------ 2. KIỂM TRA SQL
@@ -370,7 +379,7 @@ def answer(question, history, step=lambda text: None):
     plan = ask_sql(question, history)
     if not plan.get("sql"):
         reply = plan.get("reply") or "Mình chưa hiểu câu hỏi, cậu thử hỏi lại nhé."
-        return {"q": question, "text": reply.replace("—", "-").replace("–", "-")}
+        return {"q": question, "text": clean_text(reply)}
     sql, error = plan["sql"], None
     for attempt in range(2):                    # lần đầu + 1 lần nhờ AI sửa lỗi
         try:

@@ -168,7 +168,7 @@ def whatif_chart(wi, mode):
     d = pd.DataFrame({
         "Phương thức": wi["shipping_mode"],
         "Ngày dự kiến": wi["scheduled_shipping_days"],
-        "Xác suất trễ": wi["p_late"].round(4),
+        "Xác suất trễ": wi["p_late"],   # không làm tròn trước, để nhãn khớp với câu gợi ý bên cạnh
         "Doanh thu kỳ vọng rủi ro (USD)": wi["Doanh thu kỳ vọng rủi ro"].round(2),
     })
     d["Phương thức và cam kết"] = d["Phương thức"] + " - " + d["Ngày dự kiến"].astype(str) + " ngày"
