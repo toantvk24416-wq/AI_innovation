@@ -137,9 +137,9 @@ PREDICT_CSS = f"""
 .pd-scale {{ position:relative; height:16px; font-size:12px; color:{INK}; }}
 .pd-scale span {{ position:absolute; transform:translateX(-50%); }}
 .pd-note  {{ font-size:13.5px; color:{INK}; line-height:1.55; margin-top:6px; }}
-[class*="st-key-card_in"] {{ min-height: 470px; }}
+[class*="st-key-card_in"] {{ min-height: 400px; }}
 .st-key-card_kpi_p, .st-key-card_kpi_lv, .st-key-card_kpi_money {{ min-height: 130px !important; }}
-.st-key-card_gauge, .st-key-card_whatif {{ min-height: 300px; }}
+.st-key-card_gauge, .st-key-card_whatif {{ min-height: 250px; }}
 .st-key-predict_btn button {{ background:{ACCENT}; border-color:{ACCENT}; color:#FFFFFF; }}
 .st-key-predict_btn button:hover {{ background:#D93C3C; border-color:#D93C3C; color:#FFFFFF; }}
 </style>
@@ -204,7 +204,7 @@ def page_predict():
 
     col1, col2, col3 = st.columns(3)
     with col1, st.container(key="card_in1"):
-        st.markdown('<div class="pd-group">Giao hàng và khu vực</div>', unsafe_allow_html=True)
+        st.markdown('<div class="pd-group">Giao hàng</div>', unsafe_allow_html=True)
         mode = st.selectbox("Phương thức vận chuyển", opt["shipping_mode"],
                             index=opt["shipping_mode"].index("Standard Class") if "Standard Class" in opt["shipping_mode"] else 0)
         days = opt["mode_days"][mode]
@@ -214,14 +214,14 @@ def page_predict():
         st.text_input("Thị trường", market, disabled=True)
         country = st.selectbox("Quốc gia", opt["region_country"].get(region, opt["order_country"]))
     with col2, st.container(key="card_in2"):
-        st.markdown('<div class="pd-group">Sản phẩm và khách hàng</div>', unsafe_allow_html=True)
+        st.markdown('<div class="pd-group">Sản phẩm</div>', unsafe_allow_html=True)
         category = st.selectbox("Nhóm hàng", opt["category_name"])
         dept = opt["category_department"].get(category, opt["department_name"][0])
         st.text_input("Bộ phận", dept, disabled=True)
         segment = st.selectbox("Loại khách hàng", opt["customer_segment"])
         payment = st.selectbox("Hình thức thanh toán", opt["payment_type"])
     with col3, st.container(key="card_in3"):
-        st.markdown('<div class="pd-group">Giá trị và thời điểm đặt</div>', unsafe_allow_html=True)
+        st.markdown('<div class="pd-group">Giá trị và thời điểm</div>', unsafe_allow_html=True)
         qty = st.number_input("Số lượng", 1, 5, 1)
         price = st.number_input("Đơn giá (USD)", 9.99, 1999.99, 59.99, step=1.0)
         disc = st.slider("Tỷ lệ giảm giá", 0.0, 0.25, 0.0, 0.01, format="%.2f")
@@ -238,7 +238,7 @@ def page_predict():
            "order_day_of_week": dow, "order_is_weekend": int(dow in (1, 7)), "order_hour": t.hour}
 
     left, right = st.columns([3, 1], vertical_alignment="center")
-    left.markdown(f'<div class="pd-calc">Doanh số <b>{vn_money(sales)}</b> - tổng tiền sau giảm giá <b>{vn_money(total)}</b></div>',
+    left.markdown(f'<div class="pd-calc">Doanh số <b>{vn_money(sales)}</b> · sau giảm giá <b>{vn_money(total)}</b></div>',
                   unsafe_allow_html=True)
     if right.button("Dự báo", type="primary", width="stretch", key="predict_btn"):
         st.session_state["pred_row"] = row
@@ -268,11 +268,10 @@ def page_predict():
         card_header("Vị trí trên thang rủi ro")
         st.markdown(gauge_html(p), unsafe_allow_html=True)
         best = wi.loc[wi["p_late"].idxmin()]
-        tip = ("Đây đã là phương thức ít rủi ro nhất cho đơn này." if best["shipping_mode"] == mode else
-               f'Đổi sang <b>{best["shipping_mode"]}</b> thì xác suất trễ còn <b>{vn_pct(best["p_late"])}</b>.')
+        tip = ("Đã là phương thức ít rủi ro nhất." if best["shipping_mode"] == mode else
+               f'Đổi sang <b>{best["shipping_mode"]}</b>: còn <b>{vn_pct(best["p_late"])}</b>.')
         st.markdown(f'<div class="pd-note" style="margin-top:22px">{tip}</div>'
-                    '<div class="pd-note">Kết quả dùng để tham khảo và xếp ưu tiên, không phải cam kết giao hàng. '
-                    'First Class gần như luôn trễ trong dữ liệu gốc.</div>', unsafe_allow_html=True)
+                    '<div class="pd-note">Chỉ để tham khảo, không phải cam kết giao hàng.</div>', unsafe_allow_html=True)
     with w, st.container(key="card_whatif"):
         card_header("Nếu đổi phương thức vận chuyển")
         st.altair_chart(whatif_chart(wi, mode), width="stretch")
@@ -288,15 +287,15 @@ def page_predict():
         card_header("Ngày hẹn giao đề xuất", pr["nguon"])
         st.markdown(
             f'<div class="kpi-value">{due_new:%d/%m/%Y}</div>'
-            f'<span class="kpi-pill">hẹn {pr["promise_days"]} ngày theo P80, thay vì {days} ngày ({due_old:%d/%m})</span>'
-            f'<div class="pd-note" style="margin-top:14px">Số ngày giao thực tế dự báo: P50 = {pr["p50"]:g}, '
-            f'P80 = {pr["p80"]:g}, P90 = {pr["p90"]:g}. Khoảng 8/10 đơn tương tự giao kịp ngày hẹn P80.</div>',
+            f'<span class="kpi-pill">hẹn {pr["promise_days"]} ngày thay vì {days} ({due_old:%d/%m})</span>'
+            f'<div class="pd-note" style="margin-top:14px">P50 {pr["p50"]:g} · P80 {pr["p80"]:g} · P90 {pr["p90"]:g} ngày. '
+            f'Khoảng 8/10 đơn tương tự giao kịp ngày P80.</div>',
             unsafe_allow_html=True)
     with y, st.container(key="card_reasons"):
-        card_header("Yếu tố làm tăng rủi ro và việc nên làm", "SHAP cho biết mô hình dựa vào đâu, không phải nguyên nhân")
+        card_header("Yếu tố rủi ro và việc nên làm")
         html = "".join(f'<div class="pd-note">• {r["label_vi"]} <span style="color:#8C8C8C">(SHAP +{r["shap"]:.2f})</span></div>'
                        for r in ex["reasons"]) or '<div class="pd-note">Không có yếu tố nào làm tăng rủi ro.</div>'
-        html += "".join(f'<div class="pd-note"><b>{a["ma"]}</b>: {a["hanh_dong"]} · <i>{a["nguoi_thuc_hien"]}</i></div>'
+        html += "".join(f'<div class="pd-note"><b>{a["ma"]}</b>: {a["hanh_dong"]}' + (f' · <i>{a["nguoi_thuc_hien"]}</i>' if a["nguoi_thuc_hien"] not in ("", "-") else "") + '</div>'
                         for a in acts)
         st.markdown(html, unsafe_allow_html=True)
 

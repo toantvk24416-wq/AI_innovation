@@ -13,7 +13,8 @@ from overview import ACCENT, INK, MODE_ORDER, MUTED, F, card_header, clean, kpi_
 
 PAGE_CSS = f"""
 <style>
-.st-key-card_bt, .st-key-card_pk {{ min-height: 430px; }}
+.st-key-card_bt, .st-key-card_pk {{ min-height: 340px; }}
+.st-key-card_q, .st-key-card_shap {{ min-height: 330px; }}
 .pr-note {{ font-size:13px; color:{MUTED}; line-height:1.55; margin-top:6px; }}
 .pr-note b {{ color:{INK}; }}
 </style>
@@ -67,11 +68,11 @@ def page_promise():
 
     c1, c2, c3, c4 = st.columns(4, gap="medium")
     with c1:
-        kpi_card("card_pr1", "late", "Trễ so với ngày hẹn hiện tại", vn_pct(allr.loc["Như cũ", "ty_le_tre_so_voi_hen"]),
-                 "giữ cam kết như cũ", True, None, None)
+        kpi_card("card_pr1", "late", "Trễ so với hẹn hiện tại", vn_pct(allr.loc["Như cũ", "ty_le_tre_so_voi_hen"]),
+                 "cam kết như cũ", True, None, None)
     with c2:
         kpi_card("card_pr2", "box", "Nếu hẹn theo P80", vn_pct(allr.loc["Hẹn theo P80", "ty_le_tre_so_voi_hen"]),
-                 "đơn trễ so với ngày hẹn mới", False, None, None)
+                 "ngày hẹn mới", False, None, None)
     with c3:
         extra = allr.loc["Hẹn theo P80", "ngay_hen_them_tb"]
         kpi_card("card_pr3", "delay", "Cái giá: hẹn thêm", f"+{extra:.2f}".replace(".", ",") + "<small>ngày</small>",
@@ -79,19 +80,17 @@ def page_promise():
     with c4:
         p10 = pk["Bỏ First Class (đã xử lý bằng luật)"]["Top 10/ngày, theo xác suất trễ"]
         kpi_card("card_pr4", "money", "Precision@10 mỗi ngày", vn_pct(p10, 0),
-                 "bỏ First Class, xếp theo xác suất", False, None, None)
+                 "không tính First Class", False, None, None)
 
     # ---------- Backtest 3 cách hẹn (6.1)
     a, b = st.columns([1.25, 1], gap="medium")
     with a, st.container(key="card_bt"):
-        card_header("So sánh các cách hẹn ngày giao", "Tỷ lệ đơn trễ so với ngày hẹn · số ngày hẹn thêm trung bình")
+        card_header("So sánh các cách hẹn", "Đơn trễ · ngày hẹn thêm")
         st.altair_chart(backtest_chart(bt), width="stretch")
-        st.markdown('<div class="pr-note">Số ngày giao thực tế trong DataCo là số nguyên (0 đến 6 ngày), nên ngày hẹn P80 '
-                    'làm tròn lên thường phủ nhiều hơn 80% đơn. Hẹn theo P80 gần như hết trễ hẹn nhưng ngày hẹn dài hơn; '
-                    'hẹn theo P50 rút ngắn ngày hẹn nhưng còn khoảng 1/3 đơn trễ. Doanh nghiệp chọn mức theo khả năng '
-                    'chấp nhận của khách.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="pr-note">Hẹn P80: gần như hết trễ nhưng hẹn dài hơn · Hẹn P50: ngắn hơn nhưng còn khoảng 1/3 đơn trễ.</div>',
+                    unsafe_allow_html=True)
     with b, st.container(key="card_pk"):
-        card_header("Chi tiết theo phương thức")
+        card_header("Theo phương thức")
         mode = st.segmented_control("Phương thức", MODE_ORDER, default="Second Class", key="pr_mode",
                                     label_visibility="collapsed") or "Second Class"
         t = bt[bt["phuong_thuc"] == mode].set_index("cach_hen").reindex(WAYS)
@@ -102,43 +101,41 @@ def page_promise():
                                                                                  min_value=0, max_value=1),
                          "ngay_hen_tb": st.column_config.NumberColumn("Hẹn TB (ngày)", format="%.2f"),
                          "ngay_hen_them_tb": st.column_config.NumberColumn("Hẹn thêm (ngày)", format="%+.2f")})
-        st.caption(f"{int(t['so_don'].iloc[0]):,} đơn {mode} trong tập kiểm tra".replace(",", "."))
+        st.caption(f"{int(t['so_don'].iloc[0]):,} đơn".replace(",", "."))
 
     # ---------- Mô hình phân vị so với bảng phân vị (5.1)
     x, y = st.columns([1, 1], gap="medium")
     with x, st.container(key="card_q"):
-        card_header("Mô hình phân vị so với bảng phân vị lịch sử",
-                    "Pinball loss càng thấp càng tốt · độ phủ P80 = tỷ lệ đơn giao kịp ngày hẹn P80")
+        card_header("Mô hình so với bảng phân vị", "Pinball loss càng thấp càng tốt")
         rows = []
         for name, lab in (("model", "Mô hình hồi quy phân vị"), ("table", "Bảng phân vị tuyến x phương thức")):
             rows.append({"Cách dự báo": lab, **{f"Pinball {k.upper()}": v for k, v in pe["pinball"][name].items()},
                          "Độ phủ P80": pe["coverage_p80"][name]["Tất cả"]})
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch",
                      column_config={"Độ phủ P80": st.column_config.NumberColumn(format="percent")})
-        chosen = "bảng phân vị lịch sử" if pe["chosen"] == "table" else "mô hình hồi quy phân vị"
-        st.markdown(f'<div class="pr-note">Theo nguyên tắc ở Mục 5.1, nếu mô hình không vượt mốc đối chiếu thì dùng bảng '
-                    f'vì đơn giản hơn. Kết quả: app đang dùng <b>{chosen}</b> để đề xuất ngày hẹn. Lý do: thời gian giao '
-                    f'thực tế phụ thuộc gần như hoàn toàn vào phương thức và tuyến, các biến khác không thêm thông tin.</div>',
+        chosen = "bảng phân vị" if pe["chosen"] == "table" else "mô hình phân vị"
+        st.markdown(f'<div class="pr-note">App dùng <b>{chosen}</b> để đề xuất ngày hẹn (đơn giản hơn, sai số thấp hơn).</div>',
                     unsafe_allow_html=True)
     with y, st.container(key="card_shap"):
-        card_header("Mô hình cảnh báo dựa vào đâu", "Trung bình |SHAP| trên 3.000 dòng hàng của tập kiểm tra")
+        card_header("Mô hình cảnh báo dựa vào đâu", "Trung bình |SHAP|")
         st.altair_chart(shap_chart(ev["shap_global"]), width="stretch")
 
-    # ---------- Precision@K (6.2) và bảng P50/P80/P90
-    with st.container(key="card_pk2"):
-        card_header("Hàng đợi cảnh báo đúng bao nhiêu (Precision@K)",
-                    "Mỗi ngày nhân viên xử lý K đơn đầu hàng đợi thì bao nhiêu % trong đó thật sự trễ")
-        pkd = pd.DataFrame(pk).T
-        st.dataframe(pkd, width="stretch", column_config={
-            c: st.column_config.NumberColumn(c, format="percent") for c in pkd.columns if c != "Số ngày"})
+    # ---------- Precision@K (6.2) và bảng P50/P80/P90 gộp trong một thẻ có tab
     with st.container(key="card_tbl"):
-        card_header("Bảng P50 · P80 · P90 theo tuyến", "Số ngày giao thực tế, tính trên tập huấn luyện")
-        t = core.load_promise_table()
-        modes = st.multiselect("Phương thức", MODE_ORDER, placeholder="Tất cả phương thức", key="pr_tbl_modes")
-        if modes:
-            t = t[t["shipping_mode"].isin(modes)]
-        t = t.assign(hen_p80=t["p80"].map(lambda v: int(-(-v // 1))))
-        st.dataframe(t[["route_name", "n_lines", "p50", "p80", "p90", "hen_p80"]], hide_index=True, width="stretch",
-                     height=380, column_config={
-                         "route_name": "Tuyến", "n_lines": st.column_config.NumberColumn("Số dòng hàng", format="localized"),
-                         "p50": "P50", "p80": "P80", "p90": "P90", "hen_p80": "Ngày hẹn đề xuất"})
+        t1, t2 = st.tabs(["Precision@K của hàng đợi", "Bảng P50 · P80 · P90 theo tuyến"])
+        with t1:
+            st.caption("Mỗi ngày xử lý K đơn đầu hàng đợi: bao nhiêu % thật sự trễ")
+            pkd = pd.DataFrame(pk).T
+            st.dataframe(pkd, width="stretch", column_config={
+                c: st.column_config.NumberColumn(c, format="percent") for c in pkd.columns if c != "Số ngày"})
+        with t2:
+            t = core.load_promise_table()
+            modes = st.multiselect("Phương thức", MODE_ORDER, placeholder="Tất cả phương thức", key="pr_tbl_modes",
+                                   label_visibility="collapsed")
+            if modes:
+                t = t[t["shipping_mode"].isin(modes)]
+            t = t.assign(hen_p80=t["p80"].map(lambda v: int(-(-v // 1))))
+            st.dataframe(t[["route_name", "n_lines", "p50", "p80", "p90", "hen_p80"]], hide_index=True, width="stretch",
+                         height=340, column_config={
+                             "route_name": "Tuyến", "n_lines": st.column_config.NumberColumn("Số dòng hàng", format="localized"),
+                             "p50": "P50", "p80": "P80", "p90": "P90", "hen_p80": "Ngày hẹn đề xuất"})

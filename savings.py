@@ -1,8 +1,11 @@
-"""Trang Ước tính tiết kiệm (PCCV 9.4, dùng cho 7.1 và 7.4).
+"""Trang Ước tính tiết kiệm (PCCV 9.4, cùng cách tính với mục 7.1 và 7.4 của báo cáo).
 
-Tiền tiết kiệm = số đơn x (tỷ lệ trễ cũ - tỷ lệ trễ mới) x chi phí xử lý một đơn trễ.
-Tỷ lệ trễ cũ và mới lấy từ backtest (data/evaluation.json). Chi phí một đơn trễ lấy từ bảng
-"Chi phí xử lý đơn" của nhóm (việc 4.3) và có thể sửa trực tiếp.
+Chi phí giao trễ mỗi tháng:  C = N x r x (c_CSKH + h x c_hoàn)
+  N: số đơn mỗi tháng · r: tỷ lệ đơn trễ hiện tại
+  c_CSKH = số phút xử lý x 801,28đ/phút (lương 10 triệu / 26 ngày / 8 giờ / 60 phút)
+  c_hoàn = cước đi x 1,07 (phụ phí xăng dầu) x 1,5 (cước đi + phí hoàn 50%)
+Khi áp dụng cách hẹn mới, số đơn trễ giảm đúng bằng tỷ lệ giảm đo trong backtest (data/evaluation.json), nên
+% tiết kiệm chi phí giao trễ = % giảm đơn trễ. Doanh thu giữ lại = số đơn trễ tránh được x 23% khách bỏ đi x giá trị TB.
 """
 import pandas as pd
 import streamlit as st
@@ -10,56 +13,76 @@ import streamlit as st
 from ontime import core
 from overview import INK, MUTED, card_header, kpi_card, vn_int, vn_pct
 
-COSTS = pd.DataFrame({
-    "Kịch bản": ["Thấp", "Cơ sở", "Cao"],
-    "Chi phí 1 đơn trễ (VNĐ)": [10_000, 29_000, 62_000],
-    "Cách tính (bảng chi phí việc 4.3)": [
-        "Giao lại 1 lần (GHTK Express 10.000)",
-        "Giao lại GHN 11.000 + lưu kho 2 ngày 3.000 + voucher giao trễ Shopee 15.000",
-        "Phí trả hàng Shopee 40.000 + xử lý hàng hoàn 8.000 + đóng gói lại 8.000 + lưu kho 3 ngày 6.000",
-    ],
+PER_MIN = 10_000_000 / 26 / 8 / 60      # đồng mỗi phút của nhân viên chăm sóc khách hàng
+RETURN_FACTOR = 1.07 * 1.5               # phụ phí xăng dầu x (cước đi + phí hoàn 50%)
+CHURN = 0.23                             # khách có thể bỏ đi sau giao hàng không ổn định (Milieu 2025)
+SCEN = ["Thấp", "Cơ sở", "Cao"]
+ASSUME = pd.DataFrame({
+    "Kịch bản": SCEN,
+    "Tỷ lệ trễ hiện tại": [0.03, 0.08, 0.10],
+    "Cách hẹn mới": ["First Class hẹn 2 ngày", "Hẹn theo P50", "Hẹn theo P80"],
+    "Phút xử lý 1 đơn trễ": [5, 10, 15],
+    "Tỷ lệ đơn trễ bị hoàn": [0.15, 0.175, 0.20],
+    "Cước giao đi (đ)": [22_000, 30_000, 40_000],
 })
 
 
+def calc(row, n, drop, aov):
+    cost = row["Phút xử lý 1 đơn trễ"] * PER_MIN + row["Tỷ lệ đơn trễ bị hoàn"] * row["Cước giao đi (đ)"] * RETURN_FACTOR
+    before = n * row["Tỷ lệ trễ hiện tại"]
+    after = before * (1 - drop)
+    saved = (before - after) * cost
+    kept = (before - after) * CHURN * aov
+    return {"cost": cost, "before": before, "after": after, "drop": drop, "saved": saved, "kept": kept, "total": saved + kept}
+
+
 def page_savings():
-    st.markdown(f"<style>.sv-note {{ font-size:13px; color:{MUTED}; line-height:1.55; }} .sv-note b {{ color:{INK}; }}</style>",
+    st.markdown(f"<style>.sv-note {{ font-size:13px; color:{MUTED}; }} .sv-note b {{ color:{INK}; }}</style>",
                 unsafe_allow_html=True)
     bt = pd.DataFrame(core.load_evaluation()["backtest"])
     allr = bt[bt["phuong_thuc"] == "Tất cả"].set_index("cach_hen")
+    old = allr.loc["Như cũ", "ty_le_tre_so_voi_hen"]
+    ways = [w for w in allr.index if w != "Như cũ"]
+
     st.markdown('<div class="ov-title">Ước tính tiết kiệm</div>', unsafe_allow_html=True)
-    st.markdown('<div class="ov-sub">Tiền tiết kiệm = số đơn x (tỷ lệ trễ cũ - tỷ lệ trễ mới) x chi phí xử lý một đơn trễ</div>',
-                unsafe_allow_html=True)
+    st.markdown('<div class="ov-sub">Một shop, ba kịch bản · chưa trừ chi phí triển khai</div>', unsafe_allow_html=True)
     st.write("")
 
     with st.container(key="card_sv_in"):
-        c1, c2, c3 = st.columns(3)
-        orders = c1.number_input("Số đơn mỗi tháng", 100, 1_000_000, 1000, step=100)
-        way = c2.selectbox("Cách hẹn ngày giao mới", [w for w in allr.index if w != "Như cũ"],
-                           index=list(allr.index).index("Hẹn theo P80") - 1)
-        aov = c3.number_input("Giá trị đơn trung bình (VNĐ)", 0, 100_000_000, 300_000, step=50_000,
-                              help="Dùng để ước tính doanh thu giữ lại: 23% khách có thể ngừng mua sau giao hàng thất thường (Milieu).")
-        old, new = allr.loc["Như cũ", "ty_le_tre_so_voi_hen"], allr.loc[way, "ty_le_tre_so_voi_hen"]
-        st.markdown(f'<div class="sv-note">Theo backtest: tỷ lệ trễ so với ngày hẹn <b>{vn_pct(old)}</b> (như cũ) '
-                    f'→ <b>{vn_pct(new)}</b> ({way}), đổi lại hẹn thêm trung bình '
-                    f'<b>{allr.loc[way, "ngay_hen_them_tb"]:.2f}'.replace(".", ",") + ' ngày</b>.</div>', unsafe_allow_html=True)
-        st.write("")
-        costs = st.data_editor(COSTS, hide_index=True, width="stretch", disabled=["Kịch bản", "Cách tính (bảng chi phí việc 4.3)"],
-                               column_config={"Chi phí 1 đơn trễ (VNĐ)": st.column_config.NumberColumn(
-                                   min_value=0, step=1000, format="localized")})
+        c1, c2 = st.columns([1, 3], vertical_alignment="bottom")
+        n = c1.number_input("Số đơn mỗi tháng", 100, 1_000_000, 1000, step=100)
+        with c2:
+            with st.expander("Tinh chỉnh giả định"):
+                a = st.data_editor(ASSUME, hide_index=True, width="stretch", disabled=["Kịch bản"], column_config={
+                    "Tỷ lệ trễ hiện tại": st.column_config.NumberColumn(min_value=0.0, max_value=1.0, step=0.01, format="percent"),
+                    "Cách hẹn mới": st.column_config.SelectboxColumn(options=ways),
+                    "Phút xử lý 1 đơn trễ": st.column_config.NumberColumn(min_value=0, step=1),
+                    "Tỷ lệ đơn trễ bị hoàn": st.column_config.NumberColumn(min_value=0.0, max_value=1.0, step=0.025, format="percent"),
+                    "Cước giao đi (đ)": st.column_config.NumberColumn(min_value=0, step=1000, format="localized")})
+                aov = st.number_input("Giá trị trung bình mỗi sản phẩm (đ)", 0, 100_000_000, 105_000, step=5_000)
 
-    fewer = orders * (old - new)
+    res = []
+    for _, r in a.fillna(0).iterrows():
+        drop = 1 - allr.loc[r["Cách hẹn mới"], "ty_le_tre_so_voi_hen"] / old if old else 0
+        res.append(calc(r, n, drop, aov))
+
     cols = st.columns(3, gap="medium")
-    for i, (col, r) in enumerate(zip(cols, costs.fillna(0).itertuples())):
-        cost = r[2]
+    for i, (col, r) in enumerate(zip(cols, res)):
         with col:
-            kpi_card(f"card_sv{i}", "money", f"Kịch bản {r[1].lower()}: tiết kiệm / tháng",
-                     vn_int(fewer * cost) + "<small>₫</small>",
-                     f"bớt {vn_int(fewer)} đơn trễ · giữ lại ~{vn_int(fewer * 0.23 * aov)} ₫ doanh thu", i != 1, None, None)
-    base = costs.fillna(0).iloc[1, 1]
-    st.write("")
-    st.success(f"Kịch bản cơ sở: cửa hàng {vn_int(orders)} đơn/tháng, cách \"{way}\", giảm khoảng "
-               f"{vn_pct(1 - new / old, 0) if old else '-'} chi phí do giao trễ, tương đương {vn_int(fewer * base)} ₫ mỗi tháng.")
-    st.markdown('<div class="sv-note">Đây là phần trăm chi phí do giao trễ, không phải phần trăm tổng chi phí. '
-                'Tỷ lệ trễ lấy từ dữ liệu DataCo (không phải dữ liệu Việt Nam); chi phí một đơn trễ ghép từ bảng giá '
-                'GHN, GHTK, Shopee trong bảng chi phí của nhóm. Chưa tính chi phí của việc hẹn ngày giao dài hơn '
-                '(một số khách có thể bỏ giỏ hàng).</div>', unsafe_allow_html=True)
+            kpi_card(f"card_sv{i}", "money", f"Kịch bản {SCEN[i].lower()}",
+                     vn_int(r["total"]) + "<small>₫/tháng</small>",
+                     f"đơn trễ {vn_int(r['before'])} → {vn_int(r['after'])} (−{vn_pct(r['drop'], 0)})",
+                     i != 1, None, None)
+
+    with st.container(key="card_sv_tbl"):
+        card_header("Chi tiết")
+        rows = {
+            "Cách hẹn mới": [x for x in a["Cách hẹn mới"]],
+            "Chi phí mỗi đơn trễ": [vn_int(r["cost"]) + " ₫" for r in res],
+            "Tiết kiệm chi phí giao trễ": [vn_int(r["saved"]) + " ₫" for r in res],
+            "Doanh thu giữ lại": [vn_int(r["kept"]) + " ₫" for r in res],
+            "Lợi ích mỗi tháng": [vn_int(r["total"]) + " ₫" for r in res],
+        }
+        st.dataframe(pd.DataFrame(rows, index=SCEN).T, width="stretch")
+    st.markdown('<div class="sv-note">Dữ liệu DataCo, không phải dữ liệu Việt Nam. Phút xử lý, tỷ lệ hoàn và cước là ước tính của nhóm; '
+                'doanh thu giữ lại chỉ tính một lần mua lại bị mất (23% khách) nên là mức tối thiểu.</div>', unsafe_allow_html=True)
